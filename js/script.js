@@ -43,13 +43,37 @@ class BoxShadowGenerator {
         this.spreadRef.value = this.spread.value;
         this.blurRef.value = this.blur.value;
         this.colorRef.value = this.color.value;
+        this.opacityRef.value = this.opacity.value;
 
         this.applyRule();
         this.showRule();
     }
 
+    // Converte HEX + Opacidade em RGBA válido para o CSS
+    hexToRgba(hex, opacity) {
+        let cleanHex = hex.replace("#", "");
+
+        if (cleanHex.length === 3) {
+            cleanHex = cleanHex.split("").map(c => c + c).join("");
+        }
+
+        const r = parseInt(cleanHex.substring(0, 2), 16) || 0;
+        const g = parseInt(cleanHex.substring(2, 4), 16) || 0;
+        const b = parseInt(cleanHex.substring(4, 6), 16) || 0;
+
+        return `rgba(${r}, ${g}, ${b}, ${opacity})`;
+    }
+
     applyRule() {
-        this.previewBox.style.boxShadow = `${this.horizontalRef.value}px ${this.verticalRef.value}px ${this.blurRef.value}px ${this.spreadRef.value}px ${this.colorRef.value}`; this.currentRule = this.previewBox.style.boxShadow;
+        // Converte o HEX da cor e o valor de opacidade em um padrão rgba()
+        const rgbColor = this.hexToRgba(this.colorRef.value, this.opacityRef.value);
+
+        // Verifica se a checkbox do inset está marcada
+        const isInset = this.inset.checked ? "inset " : "";
+
+        // Monta a regra incluindo o inset (se marcado)
+        this.previewBox.style.boxShadow = `${isInset}${this.horizontalRef.value}px ${this.verticalRef.value}px ${this.blurRef.value}px ${this.spreadRef.value}px ${rgbColor}`;
+        this.currentRule = this.previewBox.style.boxShadow;
     }
 
     showRule() {
@@ -119,8 +143,15 @@ const controls = [
     { input: vertical, type: "vertical" },
     { input: spread, type: "spread" },
     { input: blur, type: "blur" },
-    { input: color, type: "color" }
+    { input: color, type: "color" },
+    { input: opacity, type: "opacity" }
 ];
 controls.forEach(({ input, type }) => {
     input.addEventListener("input", (e) => boxShadow.updateValue(type, e.target.value));
+});
+
+// Evento exclusivo do Checkbox Inset
+inset.addEventListener("change", () => {
+    boxShadow.applyRule();
+    boxShadow.showRule();
 });
