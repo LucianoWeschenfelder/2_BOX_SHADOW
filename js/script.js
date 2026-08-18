@@ -42,14 +42,14 @@ class BoxShadowGenerator {
         this.verticalRef.value = this.vertical.value;
         this.spreadRef.value = this.spread.value;
         this.blurRef.value = this.blur.value;
+        this.colorRef.value = this.color.value;
 
         this.applyRule();
         this.showRule();
     }
 
     applyRule() {
-        this.previewBox.style.boxShadow = `${this.horizontalRef.value}px ${this.verticalRef.value}px ${this.blurRef.value}px ${this.spreadRef.value}px #000000`;
-        this.currentRule = this.previewBox.style.boxShadow;
+        this.previewBox.style.boxShadow = `${this.horizontalRef.value}px ${this.verticalRef.value}px ${this.blurRef.value}px ${this.spreadRef.value}px ${this.colorRef.value}`; this.currentRule = this.previewBox.style.boxShadow;
     }
 
     showRule() {
@@ -100,6 +100,11 @@ const boxShadow = new BoxShadowGenerator(
     blurRef,
     spread,
     spreadRef,
+    color,
+    colorRef,
+    opacity,
+    opacityRef,
+    inset,
     previewBox,
     rule,
     webkitRule,
@@ -113,7 +118,8 @@ const controls = [
     { input: horizontal, type: "horizontal" },
     { input: vertical, type: "vertical" },
     { input: spread, type: "spread" },
-    { input: blur, type: "blur" }
+    { input: blur, type: "blur" },
+    { input: color, type: "color" }
 ];
 controls.forEach(({ input, type }) => {
     input.addEventListener("input", (e) => boxShadow.updateValue(type, e.target.value));
